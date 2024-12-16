@@ -10,6 +10,16 @@
 
 export default {
 	async fetch(request, env, ctx) {
+		const defaultData = {
+			todos: [
+				{
+					id: 1,
+					name: "Finish the Cloudflare Workers blog post",
+					completed: false,
+				},
+			],
+		}
+		await env.SEALION.put("data", JSON.stringify(defaultData));
 		return new Response('Hello World!');
 	},
 };
