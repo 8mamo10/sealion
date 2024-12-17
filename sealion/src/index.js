@@ -14,8 +14,13 @@ export default {
 			todos: [
 				{
 					id: 1,
-					name: "Finish the Cloudflare Workers blog post",
+					name: "Item1",
 					completed: false,
+				},
+				{
+					id: 2,
+					name: "Item2",
+					completed: true,
 				},
 			],
 		}
