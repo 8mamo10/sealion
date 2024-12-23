@@ -1,13 +1,3 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
-
 export default {
 	async fetch(request, env, ctx) {
 		const defaultData = {
@@ -24,7 +14,18 @@ export default {
 				},
 			],
 		}
-		await env.SEALION.put("data", JSON.stringify(defaultData));
-		return new Response('Hello World!');
+		const setCache = (data) => env.SEALION.put("data", data);
+		const getCache = () => env.SEALION.get("data");
+
+		let data;
+
+		const cache = await getCache();
+		if (!cache) {
+			await setCache(JSON.stringify(defaultData));
+			data = defaultData;
+		} else {
+			data = JSON.parse(cache);
+		}
+		return new Response(JSON.stringify(data));
 	},
 };
