@@ -1,3 +1,16 @@
+const html = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Todos</title>
+  </head>
+  <body>
+    <h1>Todos</h1>
+  </body>
+</html>
+`;
+
 export default {
 	async fetch(request, env, ctx) {
 		const defaultData = {
@@ -26,6 +39,11 @@ export default {
 		} else {
 			data = JSON.parse(cache);
 		}
-		return new Response(JSON.stringify(data));
+		//return new Response(JSON.stringify(data));
+		return new Response(html, {
+			headers: {
+				'Content-Type': 'text/html',
+			}
+		});
 	},
 };
