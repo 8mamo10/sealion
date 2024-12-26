@@ -1,4 +1,5 @@
-const html = `<!DOCTYPE html>
+const html = (todos) => `
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -7,7 +8,17 @@ const html = `<!DOCTYPE html>
   </head>
   <body>
     <h1>Todos</h1>
+		<div id="todos"></div>
   </body>
+	<script>
+		window.todos = ${todos}
+		var todoContainer = document.querySelector("#todos")
+		window.todos.forEach(todo => {
+			var el = document.createElement("div")
+			el.textContent = todo.name
+			todoContainer.appendChild(el)
+		})
+  </script>
 </html>
 `;
 
@@ -40,7 +51,8 @@ export default {
 			data = JSON.parse(cache);
 		}
 		//return new Response(JSON.stringify(data));
-		return new Response(html, {
+		const body = html(JSON.stringify(data.todos).replace(/</g, '\\u003c'));
+		return new Response(body, {
 			headers: {
 				'Content-Type': 'text/html',
 			}
