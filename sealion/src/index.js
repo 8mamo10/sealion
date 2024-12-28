@@ -9,6 +9,8 @@ const html = (todos) => `
   <body>
     <h1>Todos</h1>
 		<div id="todos"></div>
+		<input type="text" name="name" placeholder="A new todo"></input>
+		<button id="create">Create</button>
   </body>
 	<script>
 		window.todos = ${todos}
@@ -17,13 +19,50 @@ const html = (todos) => `
 			var el = document.createElement("div")
 			el.textContent = todo.name
 			todoContainer.appendChild(el)
-		})
+		});
+		var populateTodos = function() {
+      var todoContainer = document.querySelector("#todos")
+      todoContainer.innerHTML = null
+      window.todos.forEach(todo => {
+        var el = document.createElement("div")
+        el.textContent = todo.name
+        todoContainer.appendChild(el)
+      })
+    };
+    populateTodos();
+		var createTodo = function() {
+			var input = document.querySelector("input[name=name]");
+			if (input.value.length) {
+				todos = [].concat(todos, {
+					id: todos.length + 1,
+					name: input.value,
+					completed: false,
+				});
+				fetch("/", {
+					method: "PUT",
+					body: JSON.stringify({todos: todos}),
+				});
+			}
+		};
+		document.querySelector("#create").addEventListener("click", createTodo);
   </script>
 </html>
 `;
 
 export default {
 	async fetch(request, env, ctx) {
+		const setCache = (data) => env.SEALION.put("data", data);
+
+		if (request.method === "PUT") {
+			const body = await request.text();
+			try {
+				JSON.parse(body);
+				await setCache(body);
+				return new Response(body, { status: 200 });
+			} catch (err) {
+				return new Response(err, { status: 500 });
+			}
+		}
 		const defaultData = {
 			todos: [
 				{
@@ -38,11 +77,10 @@ export default {
 				},
 			],
 		}
-		const setCache = (data) => env.SEALION.put("data", data);
+
 		const getCache = () => env.SEALION.get("data");
 
 		let data;
-
 		const cache = await getCache();
 		if (!cache) {
 			await setCache(JSON.stringify(defaultData));
