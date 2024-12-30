@@ -42,6 +42,8 @@ const html = (todos) => `
 					method: "PUT",
 					body: JSON.stringify({todos: todos}),
 				});
+				populateTodos()
+        input.value = ""
 			}
 		};
 		document.querySelector("#create").addEventListener("click", createTodo);
