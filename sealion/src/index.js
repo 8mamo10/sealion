@@ -24,10 +24,19 @@ const html = (todos) => `
       var todoContainer = document.querySelector("#todos")
       todoContainer.innerHTML = null
       window.todos.forEach(todo => {
-        var el = document.createElement("div")
-        el.textContent = todo.name
-        todoContainer.appendChild(el)
-      })
+        var el = document.createElement("div");
+				el.dataset.todo = todo.id;
+				var name = document.createElement("span");
+				name.textContent = todo.name;
+
+				var checkbox = document.createElement("input");
+				checkbox.type = "checkbox";
+				checkbox.checked = todo.completed ? 1 : 0;
+
+				el.appendChild(checkbox);
+        el.appendChild(name);
+        todoContainer.appendChild(el);
+      });
     };
     populateTodos();
 		var createTodo = function() {
