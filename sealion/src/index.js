@@ -32,12 +32,22 @@ const html = (todos) => `
 				var checkbox = document.createElement("input");
 				checkbox.type = "checkbox";
 				checkbox.checked = todo.completed ? 1 : 0;
+				checkbox.addEventListener("click", completeTodo);
 
 				el.appendChild(checkbox);
         el.appendChild(name);
         todoContainer.appendChild(el);
       });
     };
+		var completeTodo = function(evt) {
+			var checkbox = evt.target;
+			var todoElement = checkbox.parentNode;
+			var newTodoSet = [].concat(window.todos);
+			var todo = newTodoSet.find(t => t.id == todoElement.dataset.todo);
+			todo.completed = !todo.completed;
+			todos = newTodoSet;
+			updateTodos();
+		}
     populateTodos();
 		var createTodo = function() {
 			var input = document.querySelector("input[name=name]");
