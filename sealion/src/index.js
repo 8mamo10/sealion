@@ -87,8 +87,9 @@ export default {
 				},
 			],
 		}
-		const setCache = (data) => env.SEALION.put("data", data);
-		const getCache = () => env.SEALION.get("data");
+
+		const setCache = (key, data) => env.SEALION.put(key, data);
+		const getCache = (key) => env.SEALION.get(key);
 
 		const ip = request.headers.get("CF-Connecting-IP");
 		const myKey = `data-${ip}`;
@@ -107,7 +108,7 @@ export default {
 
 		let data;
 
-		const cache = await getCache();
+		const cache = await getCache(myKey);
 		if (!cache) {
 			await setCache(myKey, JSON.stringify(defaultData));
 			data = defaultData;
