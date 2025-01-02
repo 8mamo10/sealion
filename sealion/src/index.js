@@ -72,18 +72,7 @@ const html = (todos) => `
 
 export default {
 	async fetch(request, env, ctx) {
-		const setCache = (data) => env.SEALION.put("data", data);
 
-		if (request.method === "PUT") {
-			const body = await request.text();
-			try {
-				JSON.parse(body);
-				await setCache(body);
-				return new Response(body, { status: 200 });
-			} catch (err) {
-				return new Response(err, { status: 500 });
-			}
-		}
 		const defaultData = {
 			todos: [
 				{
@@ -98,19 +87,36 @@ export default {
 				},
 			],
 		}
-
+		const setCache = (data) => env.SEALION.put("data", data);
 		const getCache = () => env.SEALION.get("data");
 
+		const ip = request.headers.get("CF-Connecting-IP");
+		const myKey = `data-${ip}`;
+		console.log(`ip: ${myKey}`);
+
+		if (request.method === "PUT") {
+			const body = await request.text();
+			try {
+				JSON.parse(body);
+				await setCache(myKey, body);
+				return new Response(body, { status: 200 });
+			} catch (err) {
+				return new Response(err, { status: 500 });
+			}
+		}
+
 		let data;
+
 		const cache = await getCache();
 		if (!cache) {
-			await setCache(JSON.stringify(defaultData));
+			await setCache(myKey, JSON.stringify(defaultData));
 			data = defaultData;
 		} else {
 			data = JSON.parse(cache);
 		}
-		//return new Response(JSON.stringify(data));
+
 		const body = html(JSON.stringify(data.todos).replace(/</g, '\\u003c'));
+
 		return new Response(body, {
 			headers: {
 				'Content-Type': 'text/html',
