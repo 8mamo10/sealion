@@ -14,15 +14,15 @@ const html = (todos) => `
   </body>
 	<script>
 		window.todos = ${todos}
-		var todoContainer = document.querySelector("#todos")
+		var todoContainer = document.querySelector("#todos");
 		window.todos.forEach(todo => {
-			var el = document.createElement("div")
-			el.textContent = todo.name
-			todoContainer.appendChild(el)
+			var el = document.createElement("div");
+			el.textContent = todo.name;
+			todoContainer.appendChild(el);
 		});
 		var populateTodos = function() {
-      var todoContainer = document.querySelector("#todos")
-      todoContainer.innerHTML = null
+      var todoContainer = document.querySelector("#todos");
+      todoContainer.innerHTML = null;
       window.todos.forEach(todo => {
         var el = document.createElement("div");
 				el.dataset.todo = todo.id;
@@ -61,8 +61,8 @@ const html = (todos) => `
 					method: "PUT",
 					body: JSON.stringify({todos: todos}),
 				});
-				populateTodos()
-        input.value = ""
+				populateTodos();
+        input.value = "";
 			}
 		};
 		document.querySelector("#create").addEventListener("click", createTodo);
