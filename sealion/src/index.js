@@ -22,6 +22,11 @@ const html = (todos) => `
 	<script>
 		window.todos = ${todos};
 
+		var updateTodos = function() {
+			fetch("/", {method: "PUT", body: JSON.stringify({todos: window.todos }) });
+			populateTodos();
+		};
+
 		var todoContainer = document.querySelector("#todos");
 		window.todos.forEach(todo => {
 			var el = document.createElement("div");
