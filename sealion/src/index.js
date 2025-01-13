@@ -27,22 +27,31 @@ const html = (todos) => `
 			populateTodos();
 		};
 
-		var todoContainer = document.querySelector("#todos");
-		window.todos.forEach(todo => {
-			var el = document.createElement("div");
-			el.textContent = todo.name;
-			todoContainer.appendChild(el);
-		});
+		var completeTodo = function(evt) {
+			var checkbox = evt.target;
+			var todoElement = checkbox.parentNode;
+			var newTodoSet = [].concat(window.todos);
+			var todo = newTodoSet.find(t => t.id == todoElement.dataset.todo);
+			todo.completed = !todo.completed;
+			window.todos = newTodoSet;
+			updateTodos();
+		};
+
 		var populateTodos = function() {
       var todoContainer = document.querySelector("#todos");
       todoContainer.innerHTML = null;
-      window.todos.forEach(todo => {
+
+			window.todos.forEach(todo => {
         var el = document.createElement("div");
+				el.className = "border-t py-4";
 				el.dataset.todo = todo.id;
+
 				var name = document.createElement("span");
+				name.className = todo.completed ? "line-through" : "";
 				name.textContent = todo.name;
 
 				var checkbox = document.createElement("input");
+				checkbox.className = "mx-4";
 				checkbox.type = "checkbox";
 				checkbox.checked = todo.completed ? 1 : 0;
 				checkbox.addEventListener("click", completeTodo);
@@ -52,32 +61,22 @@ const html = (todos) => `
         todoContainer.appendChild(el);
       });
     };
-		var completeTodo = function(evt) {
-			var checkbox = evt.target;
-			var todoElement = checkbox.parentNode;
-			var newTodoSet = [].concat(window.todos);
-			var todo = newTodoSet.find(t => t.id == todoElement.dataset.todo);
-			todo.completed = !todo.completed;
-			todos = newTodoSet;
-			updateTodos();
-		}
-    populateTodos();
+
+		populateTodos();
+
 		var createTodo = function() {
 			var input = document.querySelector("input[name=name]");
 			if (input.value.length) {
-				todos = [].concat(todos, {
-					id: todos.length + 1,
+				window.todos = [].concat(todos, {
+					id: window.todos.length + 1,
 					name: input.value,
 					completed: false,
 				});
-				fetch("/", {
-					method: "PUT",
-					body: JSON.stringify({todos: todos}),
-				});
-				populateTodos();
         input.value = "";
+				updateTodos();
 			}
 		};
+
 		document.querySelector("#create").addEventListener("click", createTodo);
   </script>
 </html>
@@ -106,7 +105,7 @@ export default {
 
 		const ip = request.headers.get("CF-Connecting-IP");
 		const myKey = `data-${ip}`;
-		console.log(`ip: ${myKey}`);
+		// console.log(`ip: ${myKey}`);
 
 		if (request.method === "PUT") {
 			const body = await request.text();
