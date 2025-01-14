@@ -43,7 +43,7 @@ const html = (todos) => `
 
 			window.todos.forEach(todo => {
         var el = document.createElement("div");
-				el.className = "border-t py-4";
+				el.className = "border-t py-4 flex flex-wrap gap-x-6 gap-y-4";
 				el.dataset.todo = todo.id;
 
 				var name = document.createElement("span");
@@ -56,8 +56,13 @@ const html = (todos) => `
 				checkbox.checked = todo.completed ? 1 : 0;
 				checkbox.addEventListener("click", completeTodo);
 
+				var tag = document.createElement("span");
+				tag.className = "inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-red-600/10 ring-inset";
+				tag.textContent = "Tag";
+
 				el.appendChild(checkbox);
         el.appendChild(name);
+				el.appendChild(tag);
         todoContainer.appendChild(el);
       });
     };
